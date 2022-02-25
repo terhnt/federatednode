@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-fednode.py: script to set up and manage a Unoparty federated node
+unonode.py: script to set up and manage a Unoparty federated node
 '''
 
 import sys
@@ -20,15 +20,15 @@ from datetime import datetime, timezone
 
 VERSION="2.3.0"
 
-PROJECT_NAME = "federatednode"
+PROJECT_NAME = "federatednode-uno"
 CURDIR = os.getcwd()
 SCRIPTDIR = os.path.dirname(os.path.realpath(__file__))
-FEDNODE_CONFIG_FILE = ".fednode.config"
-FEDNODE_CONFIG_PATH = os.path.join(SCRIPTDIR, FEDNODE_CONFIG_FILE)
+UNONODE_CONFIG_FILE = ".unonode.config"
+UNONODE_CONFIG_PATH = os.path.join(SCRIPTDIR, UNONODE_CONFIG_FILE)
 
 REPO_BASE_HTTPS = "https://github.com/terhnt/{}.git"
 REPO_BASE_SSH = "git@github.com:terhnt/{}.git"
-REPOS_BASE = ['unoparty-lib', 'unoparty-cli', 'addrindexrs']
+REPOS_BASE = ['unoparty-lib', 'unoparty-cli', 'addrindexrs_uno']
 REPOS_UNOBLOCK = REPOS_BASE + ['unoblock', ]
 REPOS_FULL = REPOS_UNOBLOCK + ['unowallet', 'armory-utxsvr', 'xup-proxy']
 
@@ -39,23 +39,23 @@ HOST_PORTS_USED = {
     'full': [65535, 65531, 8122, 18122, 4120, 14120, 4420, 14420, 80, 443, 27017]
 }
 VOLUMES_USED = {
-    'base': ['unobtanium-data', 'addrindexrs-data', 'unoparty-data'],
-    'base_extbtc': ['addrindexrs-data', 'unoparty-data'],
-    'unoblock': ['unobtanium-data', 'addrindexrs-data', 'unoparty-data', 'unoblock-data', 'mongodb-data'],
-    'full': ['unobtanium-data', 'addrindexrs-data', 'unoparty-data', 'unoblock-data', 'mongodb-data', 'armory-data', 'xup-proxy']
+    'base': ['unobtanium-data', 'addrindexrs_uno-data', 'unoparty-data'],
+    'base_extbtc': ['addrindexrs_uno-data', 'unoparty-data'],
+    'unoblock': ['unobtanium-data', 'addrindexrs_uno-data', 'unoparty-data', 'unoblock-data', 'mongodb-data'],
+    'full': ['unobtanium-data', 'addrindexrs_uno-data', 'unoparty-data', 'unoblock-data', 'mongodb-data', 'armory-data', 'xup-proxy']
 }
-UPDATE_CHOICES = ['addrindexrs', 'addrindexrs-testnet',
+UPDATE_CHOICES = ['addrindexrs_uno', 'addrindexrs_uno-testnet',
                   'unoparty', 'unoparty-testnet', 'unoblock',
                   'unoblock-testnet', 'unowallet', 'armory-utxsvr',
                   'armory-utxsvr-testnet', 'xup-proxy', 'xup-proxy-testnet']
 REPARSE_CHOICES = ['unoparty', 'unoparty-testnet', 'unoblock', 'unoblock-testnet']
 ROLLBACK_CHOICES = ['unoparty', 'unoparty-testnet']
 VACUUM_CHOICES = ['unoparty', 'unoparty-testnet']
-SHELL_CHOICES = UPDATE_CHOICES + ['mongodb', 'redis', 'unobtanium', 'unobtanium-testnet', 'addrindexrs', 'addrindexrs-testnet']
+SHELL_CHOICES = UPDATE_CHOICES + ['mongodb', 'redis', 'unobtanium', 'unobtanium-testnet', 'addrindexrs_uno', 'addrindexrs_uno-testnet']
 
 CONFIGCHECK_FILES_BASE_EXTERNAL_UNOBTANIUM = [
-    ['addrindexrs', 'addrindexrs.env.default', 'addrindexrs.env'],
-    ['addrindexrs', 'addrindexrs.testnet.env.default', 'addrindexrs.testnet.env'],
+    ['addrindexrs_uno', 'addrindexrs_uno.env.default', 'addrindexrs_uno.env'],
+    ['addrindexrs_uno', 'addrindexrs_uno.testnet.env.default', 'addrindexrs_uno.testnet.env'],
     ['unoparty', 'client.conf.default', 'client.conf'],
     ['unoparty', 'client.testnet.conf.default', 'client.testnet.conf'],
     ['unoparty', 'server.conf.default', 'server.conf'],
@@ -64,8 +64,8 @@ CONFIGCHECK_FILES_BASE_EXTERNAL_UNOBTANIUM = [
 CONFIGCHECK_FILES_BASE = [
     ['unobtanium', 'unobtanium.conf.default', 'unobtanium.conf'],
     ['unobtanium', 'unobtanium.testnet.conf.default', 'unobtanium.testnet.conf'],
-    ['addrindexrs', 'addrindexrs.env.default', 'addrindexrs.env'],
-    ['addrindexrs', 'addrindexrs.testnet.env.default', 'addrindexrs.testnet.env'],
+    ['addrindexrs_uno', 'addrindexrs_uno.env.default', 'addrindexrs_uno.env'],
+    ['addrindexrs_uno', 'addrindexrs_uno.testnet.env.default', 'addrindexrs_uno.testnet.env'],
     ['unoparty', 'client.conf.default', 'client.conf'],
     ['unoparty', 'client.testnet.conf.default', 'client.testnet.conf'],
     ['unoparty', 'server.conf.default', 'server.conf'],
@@ -91,7 +91,7 @@ DOCKER_CONFIG_PATH = None
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(prog='fednode', description='fednode utility v{}'.format(VERSION))
+    parser = argparse.ArgumentParser(prog='unonode', description='unonode utility v{}'.format(VERSION))
     parser.add_argument("-V", '--version', action='version', version='%(prog)s {}'.format(VERSION))
     parser.add_argument("-d", "--debug", action='store_true', default=False, help="increase output verbosity")
     parser.add_argument("--no-pull", action='store_true', default=False, help="use only local docker images (for debugging)")
@@ -99,22 +99,22 @@ def parse_args():
     subparsers = parser.add_subparsers(help='help on modes', dest='command')
     subparsers.required = True
 
-    parser_install = subparsers.add_parser('install', help="install fednode services")
+    parser_install = subparsers.add_parser('install', help="install unonode services")
     parser_install.add_argument("config", choices=['base', 'base_extbtc', 'unoblock', 'full'], help="The name of the service configuration to utilize")
     parser_install.add_argument("branch", choices=['master', 'develop'], help="The name of the git branch to utilize for the build (note that 'master' pulls the docker 'latest' tags)")
     parser_install.add_argument("--use-ssh-uris", action="store_true", help="Use SSH URIs for source checkouts from Github, instead of HTTPS URIs")
     parser_install.add_argument("--mongodb-interface", default="127.0.0.1",
         help="Bind mongo to this host interface. Localhost by default, enter 0.0.0.0 for all host interfaces.")
 
-    parser_uninstall = subparsers.add_parser('uninstall', help="uninstall fednode services")
+    parser_uninstall = subparsers.add_parser('uninstall', help="uninstall unonode services")
 
-    parser_start = subparsers.add_parser('start', help="start fednode services")
+    parser_start = subparsers.add_parser('start', help="start unonode services")
     parser_start.add_argument("services", nargs='*', default='', help="The service or services to start (or blank for all services)")
 
-    parser_stop = subparsers.add_parser('stop', help="stop fednode services")
+    parser_stop = subparsers.add_parser('stop', help="stop unonode services")
     parser_stop.add_argument("services", nargs='*', default='', help="The service or services to stop (or blank for all services)")
 
-    parser_restart = subparsers.add_parser('restart', help="restart fednode services")
+    parser_restart = subparsers.add_parser('restart', help="restart unonode services")
     parser_restart.add_argument("services", nargs='*', default='', help="The service or services to restart (or blank for all services)")
 
     parser_reparse = subparsers.add_parser('reparse', help="reparse a unoparty-server or unoblock service")
@@ -129,11 +129,11 @@ def parse_args():
 
     parser_ps = subparsers.add_parser('ps', help="list installed services")
 
-    parser_tail = subparsers.add_parser('tail', help="tail fednode logs")
+    parser_tail = subparsers.add_parser('tail', help="tail unonode logs")
     parser_tail.add_argument("services", nargs='*', default='', help="The name of the service or services whose logs to tail (or blank for all services)")
     parser_tail.add_argument("-n", "--num-lines", type=int, default=50, help="Number of lines to tail")
 
-    parser_logs = subparsers.add_parser('logs', help="tail fednode logs")
+    parser_logs = subparsers.add_parser('logs', help="tail unonode logs")
     parser_logs.add_argument("services", nargs='*', default='', help="The name of the service or services whose logs to view (or blank for all services)")
 
     parser_exec = subparsers.add_parser('exec', help="execute a command on a specific container")
@@ -143,11 +143,11 @@ def parse_args():
     parser_shell = subparsers.add_parser('shell', help="get a shell on a specific service container")
     parser_shell.add_argument("service", choices=SHELL_CHOICES, help="The name of the service to shell into")
 
-    parser_update = subparsers.add_parser('update', help="upgrade fednode services (i.e. update source code and restart the container, but don't update the container itself')")
+    parser_update = subparsers.add_parser('update', help="upgrade unonode services (i.e. update source code and restart the container, but don't update the container itself')")
     parser_update.add_argument("-n", "--no-restart", action="store_true", help="Don't restart the container after updating the code'")
     parser_update.add_argument("services", nargs='*', default='', help="The name of the service or services to update (or blank to for all applicable services)")
 
-    parser_rebuild = subparsers.add_parser('rebuild', help="rebuild fednode services (i.e. remove and refetch/install docker containers)")
+    parser_rebuild = subparsers.add_parser('rebuild', help="rebuild unonode services (i.e. remove and refetch/install docker containers)")
     parser_rebuild.add_argument("services", nargs='*', default='', help="The name of the service or services to rebuild (or blank for all services)")
     parser_rebuild.add_argument("--mongodb-interface", default="127.0.0.1")
 
@@ -159,14 +159,14 @@ def parse_args():
 
 
 def write_config(config):
-    cfg_file = open(FEDNODE_CONFIG_PATH, 'w')
+    cfg_file = open(UNONODE_CONFIG_PATH, 'w')
     config.write(cfg_file)
     cfg_file.close()
 
 
 def run_compose_cmd(cmd):
     assert DOCKER_CONFIG_PATH
-    assert os.environ['FEDNODE_RELEASE_TAG']
+    assert os.environ['UNONODE_RELEASE_TAG']
     return os.system("{} docker-compose -f {} -p {} {}".format(SUDO_CMD, DOCKER_CONFIG_PATH, PROJECT_NAME, cmd))
 
 
@@ -203,7 +203,7 @@ def setup_env():
 
 def is_container_running(service, abort_on_not_exist=True):
     try:
-        container_running = subprocess.check_output('{} docker inspect --format="{{{{ .State.Running }}}}" federatednode_{}_1'.format(SUDO_CMD, service), shell=True).decode("utf-8").strip()
+        container_running = subprocess.check_output('{} docker inspect --format="{{{{ .State.Running }}}}" federatednode-uno_{}_1'.format(SUDO_CMD, service), shell=True).decode("utf-8").strip()
         container_running = container_running == 'true'
     except subprocess.CalledProcessError:
         container_running = None
@@ -283,11 +283,11 @@ def main():
 
     # for all other commands
     # if config doesn't exist, only the 'install' command may be run
-    config_existed = os.path.exists(FEDNODE_CONFIG_PATH)
+    config_existed = os.path.exists(UNONODE_CONFIG_PATH)
     config = configparser.ConfigParser()
     if not config_existed:
         if args.command != 'install':
-            print("config file {} does not exist. Please run the 'install' command first".format(FEDNODE_CONFIG_FILE))
+            print("config file {} does not exist. Please run the 'install' command first".format(UNONODE_CONFIG_FILE))
             sys.exit(1)
 
         # write default config
@@ -297,13 +297,13 @@ def main():
         write_config(config)
 
     # load and read config
-    assert os.path.exists(FEDNODE_CONFIG_PATH)
-    config.read(FEDNODE_CONFIG_PATH)
+    assert os.path.exists(UNONODE_CONFIG_PATH)
+    config.read(UNONODE_CONFIG_PATH)
     build_config = config.get('Default', 'config')
     docker_config_file = "docker-compose.{}.yml".format(build_config)
     DOCKER_CONFIG_PATH = os.path.join(SCRIPTDIR, docker_config_file)
     repo_branch = config.get('Default', 'branch')
-    os.environ['FEDNODE_RELEASE_TAG'] = 'latest' if repo_branch == 'master' else repo_branch
+    os.environ['UNONODE_RELEASE_TAG'] = 'latest' if repo_branch == 'master' else repo_branch
     os.environ['HOSTNAME_BASE'] = socket.gethostname()
     os.environ['MONGODB_HOST_INTERFACE'] = getattr(args, 'mongodb_interface', "127.0.0.1")
 
@@ -366,7 +366,7 @@ def main():
         run_compose_cmd("up -d")
     elif args.command == 'uninstall':
         run_compose_cmd("down")
-        os.remove(FEDNODE_CONFIG_PATH)
+        os.remove(UNONODE_CONFIG_PATH)
     elif args.command == 'start':
         run_compose_cmd("start {}".format(' '.join(args.services)))
     elif args.command == 'stop':
@@ -393,11 +393,11 @@ def main():
             cmd = args.cmd
         else:
             cmd = '"{}"'.format(' '.join(args.cmd).replace('"', '\\"'))
-        os.system("{} docker exec -i -t federatednode_{}_1 bash -c {}".format(SUDO_CMD, args.service, cmd))
+        os.system("{} docker exec -i -t federatednode-uno_{}_1 bash -c {}".format(SUDO_CMD, args.service, cmd))
     elif args.command == 'shell':
         container_running = is_container_running(args.service)
         if container_running:
-            os.system("{} docker exec -i -t federatednode_{}_1 bash".format(SUDO_CMD, args.service))
+            os.system("{} docker exec -i -t federatednode-uno_{}_1 bash".format(SUDO_CMD, args.service))
         else:
             print("Container is not running -- creating a transient container with a 'bash' shell entrypoint...")
             run_compose_cmd("run --no-deps --rm --entrypoint bash {}".format(args.service))
@@ -447,8 +447,8 @@ def main():
                 if service_base == 'unowallet' and os.path.exists(os.path.join(SCRIPTDIR, "src", "unowallet")):  # special case
                     transifex_cfg_path = os.path.join(os.path.expanduser("~"), ".transifex")
                     if os.path.exists(transifex_cfg_path):
-                        os.system("{} docker cp {} federatednode_unowallet_1:/root/.transifex".format(SUDO_CMD, transifex_cfg_path))
-                    os.system("{} docker exec -i -t federatednode_unowallet_1 bash -c \"cd /unowallet/src ".format(SUDO_CMD) +
+                        os.system("{} docker cp {} federatednode-uno_unowallet_1:/root/.transifex".format(SUDO_CMD, transifex_cfg_path))
+                    os.system("{} docker exec -i -t federatednode-uno_unowallet_1 bash -c \"cd /unowallet/src ".format(SUDO_CMD) +
                               "&& bower --allow-root update && cd /unowallet && npm update && grunt build\"")
                     if not os.path.exists(transifex_cfg_path):
                         print("NOTE: Did not update locales because there is no .transifex file in your home directory")

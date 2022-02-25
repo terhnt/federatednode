@@ -1,11 +1,11 @@
 [Default]
 testnet=1
 backend-ssl-no-verify=True
-backend-name=addrindexrs
+backend-name=addrindexrs_uno
 backend-connect=unobtanium-testnet
 backend-user=unobtaniumrpc
 backend-password=rpc
-indexd-connect=addrindexrs-testnet
+indexd-connect=addrindexrs_uno-testnet
 indexd-port=18122
 rpc-host=0.0.0.0
 rpc-user=unobtaniumrpc

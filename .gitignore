@@ -36,8 +36,8 @@ nosetests.xml
 .project
 .pydevproject
 
-# Fednode config
-.fednode.config
+# Unonode config
+.unonode.config
 
 # Auto-created data dir
 data

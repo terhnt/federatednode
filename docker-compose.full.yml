@@ -11,15 +11,15 @@ services:
       file: docker-compose.tmpl.yml
       service: unobtanium-base-testnet
 
-  addrindexrs:
+  addrindexrs_uno:
     extends:
       file: docker-compose.tmpl.yml
-      service: addrindexrs-base-mainnet
+      service: addrindexrs_uno-base-mainnet
 
-  addrindexrs-testnet:
+  addrindexrs_uno-testnet:
     extends:
       file: docker-compose.tmpl.yml
-      service: addrindexrs-base-testnet
+      service: addrindexrs_uno-base-testnet
 
   unoparty:
     extends:
@@ -27,7 +27,7 @@ services:
       service: unoparty-base-mainnet
     links:
       - unobtanium
-      - addrindexrs
+      - addrindexrs_uno
 
   unoparty-testnet:
     extends:
@@ -35,7 +35,7 @@ services:
       service: unoparty-base-testnet
     links:
       - unobtanium-testnet
-      - addrindexrs-testnet
+      - addrindexrs_uno-testnet
 
   mongodb:
     extends:
@@ -112,7 +112,7 @@ services:
 
 volumes:
   unobtanium-data:
-  addrindexrs-data:
+  addrindexrs_uno-data:
   unoparty-data:
   unoblock-data:
   mongodb-data:

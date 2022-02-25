@@ -1,10 +1,10 @@
 [![Slack Status](http://slack.unoparty.io/badge.svg)](http://slack.unoparty.io)
 
-**All-in-one Unoparty Federated Node Build System (`federatednode`)**
+**All-in-one Unoparty Federated Node Build System (`federatednode-uno`)**
 
 Allows one to easily build a unoparty-server, `unoblock` and/or Unowallet system, with all required components. Uses Docker and Docker compose.
 
-See official counterparty federatednode documentation at <http://counterparty.io/docs/federated_node/>.
+See official counterparty federatednode-uno documentation at <http://counterparty.io/docs/federated_node/>.
 
 Please issue any/all pull requests against **develop**, not **master**.
 
@@ -40,17 +40,17 @@ On Linux and OS X, install as a non-root sudo-er from home directory.
 
 **Clone and check out the code**
 
-On all OS, clone federatednode repo and enter cloned directory:
+On all OS, clone federatednode-uno repo and enter cloned directory:
 
 ```
-git clone https://github.com/terhnt/federatednode.git
-cd federatednode
+git clone https://github.com/terhnt/federatednode-uno.git
+cd federatednode-uno
 ```
 
 On Linux and OS X:
 
 ```
-sudo ln -sf `pwd`/fednode.py /usr/local/bin/fednode
+sudo ln -sf `pwd`/unonode.py /usr/local/bin/unonode
 ```
 
 **Build and link the containers**
@@ -58,7 +58,7 @@ sudo ln -sf `pwd`/fednode.py /usr/local/bin/fednode
 Run the following command:
 
 ```
-fednode install <CONFIG> <BRANCH>
+unonode install <CONFIG> <BRANCH>
 ```
 
 Where ```<CONFIG>``` is one of the following:
@@ -77,10 +77,10 @@ For example:
 
 ```
 # install a base configuration for the master branch
-fednode install base master
+unonode install base master
 
 # install a full configuration for the develop branch
-fednode install full develop
+unonode install full develop
 ```
 
 In some cases (slow host, limited bandwidth), you may experience a failure to install due to download timeouts which happen because of network unstability. In that case consider changing Docker’s ```max-concurrent-downloads``` value to 1 or 2 from default 3. To do that create a custom ```/etc/docker/daemon.json``` daemon options file and restart Docker service.
@@ -90,25 +90,25 @@ As mentioned earlier, the install script may stop if ports used by Federated Nod
 For example, the original mongodb can be reconfigured to listen on port 28018 and unoblock’s mongodb can use the default port 27017. The Federated Node install script makes it possible to specify the interface used by its mongodb container (example below), but it currently does not have the ability to do this for other services or get around port conflicts.
 
 ```
-fednode install --mongodb-interface 127.0.0.2 unoblock master
+unonode install --mongodb-interface 127.0.0.2 unoblock master
 ```
 
 **Wait for initial sync**
 
 After installation, the services will be automatically started. To check the status, issue:
 ```
-fednode ps
+unonode ps
 ```
 
-If you have existing instances of Unobtanium Core (either mainnet or testnet), at this point you could stop all services listed in ```fednode ps``` output, change configuration files (of unoparty and unoblock, for example) and point them to your existing Unobtanium Core. Configuration files can be found in various service directories located under federatednode/config.
+If you have existing instances of Unobtanium Core (either mainnet or testnet), at this point you could stop all services listed in ```unonode ps``` output, change configuration files (of unoparty and unoblock, for example) and point them to your existing Unobtanium Core. Configuration files can be found in various service directories located under federatednode-uno/config.
 
 Once the containers are installed and running, keep in mind that it will take some time for ```unobtaniumd``` to download the blockchain data. Once this is done, ```unoparty-server``` will fully start and sync, followed by ```unoblock``` (if in use). At that point, the server will be usable.
 
 You may check the sync status by tailing the appropriate service logs, e.g. for Unobtanium Core and unoparty server on mainnet:
 
 ```
-fednode tail unobtanium
-fednode tail unoparty
+unonode tail unobtanium
+unonode tail unoparty
 ```
 
 **Access the system**
@@ -127,7 +127,7 @@ If ```unowallet``` is installed, access to the following URLs will be possible:
 
 Ensure that your firewall software is enabled. If you want to provide access from external systems, you can allow through some or all of the [appropriate ports](https://counterparty.io/docs/federated_node/#accessing). In addition, if you are running a node in a production scenario, it is recommended that you properly secure it.
 
-You may also want to tighten ownership and permissions on all conf files in federatednode/config subdirectories, but keep in mind that you should be the only user with access to the operating system that runs Federated Node containers: Federated Node is not designed for shared OS environments.
+You may also want to tighten ownership and permissions on all conf files in federatednode-uno/config subdirectories, but keep in mind that you should be the only user with access to the operating system that runs Federated Node containers: Federated Node is not designed for shared OS environments.
 
 **Ubuntu Linux**
 Ubuntu Linux users can optionally run a little script that will issue a number of commands to assist with securing their systems:
@@ -149,35 +149,35 @@ If you expect to run a busy Federated Node that requires unoblock, you can consi
 **Checking status**
 To check the status of the containers, run:
 ```
-fednode ps
+unonode ps
 ```
 
 **Modifying configurations**
 
-Configuration files for the ```unobtanium```, ```unoparty``` and ```unoblock``` services are stored under ```federatednode/config/``` and may be freely edited. The various locations are as follows:
+Configuration files for the ```unobtanium```, ```unoparty``` and ```unoblock``` services are stored under ```federatednode-uno/config/``` and may be freely edited. The various locations are as follows:
 
-- ```unobtanium```: See ```federatednode/config/unobtanium/unobtanium.conf```
-- ```unobtanium-testnet```: See ```federatednode/config/unobtanium/unobtanium.testnet.conf```
-- ```unoparty```: See ```federatednode/config/unoparty/server.conf```
-- ```unoparty-testnet```: See ```federatednode/config/unoparty/server.testnet.conf```
-- ```unoblock```: See ```federatednode/config/unoblock/server.conf```
-- ```unoblock-testnet```: See ```federatednode/config/unoblock/server.testnet.conf```
+- ```unobtanium```: See ```federatednode-uno/config/unobtanium/unobtanium.conf```
+- ```unobtanium-testnet```: See ```federatednode-uno/config/unobtanium/unobtanium.testnet.conf```
+- ```unoparty```: See ```federatednode-uno/config/unoparty/server.conf```
+- ```unoparty-testnet```: See ```federatednode-uno/config/unoparty/server.testnet.conf```
+- ```unoblock```: See ```federatednode-uno/config/unoblock/server.conf```
+- ```unoblock-testnet```: See ```federatednode-uno/config/unoblock/server.testnet.conf```
 - ```redis```: shared service used for both mainnet and testnet
 - ```mongodb```: shared service used for both mainnet and testnet
 
 Remember: once done editing a configuration file, you must ```restart``` the corresponding service. Also, please don’t change port or usernames/passwords if the configuration files unless you know what you are doing (as the services are coded to work together smoothly with specific values).
 
-For example, a user with base setup (Unobtanium Core & Unoparty Server) could make Unoparty use existing Unobtanium Core by changing configuration files found under federatednode/config/unoparty/ (```backend-connect``` in Unoparty server configuration files and ```wallet-connect``` in client configuration files.) At this point Unobtanium Core (mainnet and/or testnet) container(s) could be stopped and unoparty server container restarted. If your existing Unobtanium Server allows RPC connections, with proper settings and correct RPC credentials in their configuration files, unoparty (server), unoblock and unowallet can all use it so that you don’t have to run unobtanium or unobtanium-testnet container.
+For example, a user with base setup (Unobtanium Core & Unoparty Server) could make Unoparty use existing Unobtanium Core by changing configuration files found under federatednode-uno/config/unoparty/ (```backend-connect``` in Unoparty server configuration files and ```wallet-connect``` in client configuration files.) At this point Unobtanium Core (mainnet and/or testnet) container(s) could be stopped and unoparty server container restarted. If your existing Unobtanium Server allows RPC connections, with proper settings and correct RPC credentials in their configuration files, unoparty (server), unoblock and unowallet can all use it so that you don’t have to run unobtanium or unobtanium-testnet container.
 
 **Viewing/working with stored data**
 
 The various services use [Docker named volumes](https://docs.docker.com/engine/tutorials/dockervolumes/) to store data that is meant to be persistent:
 
-- ```unobtanium``` and ```unobtanium-testnet```: Stores blockchain data in the ```federatednode_unobtanium-data``` volume
-- ```addrindexrs``` and ```addrindexrs-testnet```: Stores index data in the ```federatednode_addrindexrs-data``` volume
-- ```unoparty``` and ```unoparty-testnet```: Stores Unoparty databases in the ```federatednode_unoparty-data``` volume
-- ```unoblock``` and ```unoblock-testnet```: Stores Unoblock asset info (images), etc in the ```federatednode_unoblock-data``` volume
-- ```mongodb```: Stores the databases for unoblock and unoblock-testnet in the ```federatednode_mongodb-data``` volume
+- ```unobtanium``` and ```unobtanium-testnet```: Stores blockchain data in the ```federatednode-uno_unobtanium-data``` volume
+- ```addrindexrs_uno``` and ```addrindexrs_uno-testnet```: Stores index data in the ```federatednode-uno_addrindexrs_uno-data``` volume
+- ```unoparty``` and ```unoparty-testnet```: Stores Unoparty databases in the ```federatednode-uno_unoparty-data``` volume
+- ```unoblock``` and ```unoblock-testnet```: Stores Unoblock asset info (images), etc in the ```federatednode-uno_unoblock-data``` volume
+- ```mongodb```: Stores the databases for unoblock and unoblock-testnet in the ```federatednode-uno_mongodb-data``` volume
 
 Use docker ```volume inspect <volume-name>``` to display volume location. See docker ```volume --help``` for help on how to interact with Docker volumes.
 
@@ -186,12 +186,12 @@ Use docker ```volume inspect <volume-name>``` to display volume location. See do
 To tail the logs, use the following command:
 
 ```
-fednode tail <service>
+unonode tail <service>
 ```
 
 Or, to view the entire log, run:
 
-```fednode logs <service>```
+```unonode logs <service>```
 
 Where ```<service>``` may be one the following, or blank to tail all services:
 
@@ -199,21 +199,21 @@ Where ```<service>``` may be one the following, or blank to tail all services:
 - ```unoparty``` (unoparty-server mainnet)
 - ```unoblock``` (unoblock mainnet)
 - ```unobtanium``` (unobtanium mainnet)
-- ```addrindexrs``` (addrindexrs mainnet)
+- ```addrindexrs_uno``` (addrindexrs_uno mainnet)
 - ```armory_utxsvr``` (armory_utxsvr mainnet)
 - ```unoparty-testnet```
 - ```unoblock-testnet```
 - ```unobtanium-testnet```
-- ```addrindexrs-testnet```
+- ```addrindexrs_uno-testnet```
 - ```armory_utxsvr-testnet```
 - ```unowallet```
 
 **Stopping and restarting containers**
 
 ```
-fednode stop <service>
-fednode start <service>
-fednode restart <service>
+unonode stop <service>
+unonode start <service>
+unonode restart <service>
 ```
 
 Where ```<service>``` is one of the service names listed [above](https://counterparty.io/docs/federated_node/#servicenames), or blank for all services.
@@ -223,7 +223,7 @@ Note that redis and mongodb are shared services and need to run if either (mainn
 **Issuing a single shell command**
 
 ```
-fednode exec <service> <CMD>
+unonode exec <service> <CMD>
 ```
 
 Where ```<service>``` is one of the service names listed above, and ```<CMD>``` is an arbitrary shell command.
@@ -231,15 +231,15 @@ Where ```<service>``` is one of the service names listed above, and ```<CMD>``` 
 For example:
 
 ```
-fednode exec unoparty unoparty-client send --source=uLoY132tBNEKDD3CRkrAen8Jnckjy1gXZR --destination=uZL4y6ysx2s4wWUDxMHYJ8YeqNJA1nWAGV --quantity=1.5 --asset=XUP
-fednode exec unobtanium-testnet unobtanium-cli getpeerinfo
-fednode exec unpblock ls /root
+unonode exec unoparty unoparty-client send --source=uLoY132tBNEKDD3CRkrAen8Jnckjy1gXZR --destination=uZL4y6ysx2s4wWUDxMHYJ8YeqNJA1nWAGV --quantity=1.5 --asset=XUP
+unonode exec unobtanium-testnet unobtanium-cli getpeerinfo
+unonode exec unpblock ls /root
 ```
 
 **Getting a shell in a conainer**
 
 ```
-fednode shell <service>
+unonode shell <service>
 ```
 
 Where ```<service>``` is one of the service names listed [above](https://counterparty.io/docs/federated_node/#servicenames)
@@ -249,7 +249,7 @@ Where ```<service>``` is one of the service names listed [above](https://counter
 To pull the newest software from the git repositories and restart the appropriate daemon, issue the following command:
 
 ```
-fednode update <service>
+unonode update <service>
 ```
 
 Where ```<service>``` is one of the following, or blank for all applicable services:
@@ -268,7 +268,7 @@ Where ```<service>``` is one of the following, or blank for all applicable servi
 Both ```unoparty-server``` and ```unoblock``` read in blockchain data and construct their own internal databases. To reset these databases and trigger a reparse of this blockchain data for one of the services, run:
 
 ```
-fednode reparse <service>
+unonode reparse <service>
 ```
 
 Where service is ```unoparty```, ```unoparty-testnet```, ```unoblock```, or ```unoblock-testnet```.
@@ -278,27 +278,27 @@ Where service is ```unoparty```, ```unoparty-testnet```, ```unoblock```, or ```u
 As a more extensive option, if you want to remove, rebuild and reinstall a container (downloading the newest container image/```Dockerfile``` and utilizing that):
 
 ```
-fednode rebuild <service>
+unonode rebuild <service>
 ```
 
 Where ```<service>``` is one of the service names listed [earlier](https://counterparty.io/docs/federated_node/#servicenames), or blank for all services. Note that you are just looking to update the source code and restart the service, ```update``` is a better option.
 
 **Uninstalling**
 
-To uninstall the entire fednode setup, run:
+To uninstall the entire unonode setup, run:
 
 ```
-fednode uninstall
+unonode uninstall
 ```
 
 ## Component development
 
-The system allows for easy development and modification of the Unoparty software components. To do so, simply update code in the directories under ```federatednode/src/``` as you see fit. These directories are mapped into the appropriate containers, overlaying (overriding) the source code that the container ships with. This, along with symlinked (develop) Python package installations makes it possible to work on code in-place, with just a service restart necessary to have the changes take effect.
+The system allows for easy development and modification of the Unoparty software components. To do so, simply update code in the directories under ```federatednode-uno/src/``` as you see fit. These directories are mapped into the appropriate containers, overlaying (overriding) the source code that the container ships with. This, along with symlinked (develop) Python package installations makes it possible to work on code in-place, with just a service restart necessary to have the changes take effect.
 
 Once done updating the source code for a particular service, issue the following command(s) to restart the container with the new code:
 
 ```
-fednode restart <service>
+unonode restart <service>
 ```
 
 Where ```<service>``` is one of the services mentioned [here](https://counterparty.io/docs/federated_node/#servicenames_code).
@@ -308,12 +308,12 @@ Where ```<service>``` is one of the services mentioned [here](https://counterpar
 - To run the ```unoparty-lib``` test suite, execute:
 
 ```
-fednode exec unoparty "cd /unoparty-lib/unopartylib; py.test --verbose --skiptestbook=all --cov-config=../.coveragerc --cov-report=term-missing --cov=./"
+unonode exec unoparty "cd /unoparty-lib/unopartylib; py.test --verbose --skiptestbook=all --cov-config=../.coveragerc --cov-report=term-missing --cov=./"
 ```
 
-- If you are working on ```unowallet```, you should browse the system using the ```/src/``` subdirectory (e.g. ```https://myunowallet.bla/src/```). This avoids using precompiled sources. Once you are happy with your changes and ready to make them available to everyone that hits the server, run fednode update unowallet, which will pull the newest repo code and repackage the web assets so that the code updates are then active from ```https://myunowallet.bla/```.
+- If you are working on ```unowallet```, you should browse the system using the ```/src/``` subdirectory (e.g. ```https://myunowallet.bla/src/```). This avoids using precompiled sources. Once you are happy with your changes and ready to make them available to everyone that hits the server, run unonode update unowallet, which will pull the newest repo code and repackage the web assets so that the code updates are then active from ```https://myunowallet.bla/```.
 
-- Note that when you install the federated node system, HTTPS repository URLs are used by default for all of the repositories checked out under ```src``` by ```fednode.py```. To use SSH URIs instead, specify the ```--use-ssh-uris``` to the ```fednode install``` command.
+- Note that when you install the federated node system, HTTPS repository URLs are used by default for all of the repositories checked out under ```src``` by ```unonode.py```. To use SSH URIs instead, specify the ```--use-ssh-uris``` to the ```unonode install``` command.
 
 **Counterwallet-Specific**
 
@@ -322,7 +322,7 @@ If you are setting up a Unowallet server, you will next need to create a ```unow
 **Getting a SSL Certificate**
 By default, the system is set up to use a self-signed SSL certificate. If you are hosting your services for others, you should get your own SSL certificate from your DNS registrar so that your users don’t see a certificate warning when they visit your site.
 
-Once you have that certificate, create a nginx-compatible ```.pem``` file. Copy that ```.pem``` file to ```federatednode/config/unowallet/ssl/unowallet.pem``` and the cooresponding certificate ```.key``` file to ```federatednode/config/unowallet/ssl/unowallet.key```. (Note that there will be a ```unowallet.key``` and ```unowallet.pem``` file already there, which are the default, self-signed certificates, and can be safely overridden.) Then, restart the ```unowallet``` service for the new certificate to take effect.
+Once you have that certificate, create a nginx-compatible ```.pem``` file. Copy that ```.pem``` file to ```federatednode-uno/config/unowallet/ssl/unowallet.pem``` and the cooresponding certificate ```.key``` file to ```federatednode-uno/config/unowallet/ssl/unowallet.key```. (Note that there will be a ```unowallet.key``` and ```unowallet.pem``` file already there, which are the default, self-signed certificates, and can be safely overridden.) Then, restart the ```unowallet``` service for the new certificate to take effect.
 
 **Monitoring the Server**
 
@@ -353,7 +353,7 @@ If ```nginx``` is not working properly, either a HTTP 5xx response, or no respon
 
 Unowallet can be configured via editing the ```unowallet.conf.json``` file, via issuing the following command:
 ```
-sudo docker exec -it federatednode_unowallet_1 vim /unowallet/unowallet.conf.json
+sudo docker exec -it federatednode-uno_unowallet_1 vim /unowallet/unowallet.conf.json
 ```
 
 This file will contain a valid JSON-formatted object, containing an a number of possible configuration properties. For example::

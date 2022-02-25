@@ -7,7 +7,7 @@
 * v2.2.2 (2016-07-08)
   * COMPATIBLE WITH: `unoparty-lib` `develop` and `unoblock` 1.4.0
   * Short options available for things like --version, --debug, --no-restart, etc
-  * fednode tail command - can specify number of lines
+  * unonode tail command - can specify number of lines
   * allow mongodb to bind to host interface (default to localhost)
   * delete respective .egg-info dirs when updating a service
   * limit logfile sizes via docker json-file log rotation
@@ -23,8 +23,8 @@
 * v2.1.0 (2016-06-16)
   * COMPATIBLE WITH: `unoparty-lib` 9.54.0 and `unoblock` 1.3.1
   * Numerous bug fixes
-  * Tweaks to most fednode subcommands to be able to work with multiple services specified
-  * Config files for most components are now stored persistently (and editable) under the federatednode/config directory
+  * Tweaks to most unonode subcommands to be able to work with multiple services specified
+  * Config files for most components are now stored persistently (and editable) under the federatednode-uno/config directory
 * v2.0.0 (2016-06-13)
   * COMPATIBLE WITH: `unoparty-lib` 9.54.0 and `unoblock` 1.3.1
   * Total revamp to use Docker and Docker Compose
@@ -43,7 +43,7 @@
   This was a major update to the build system, to coincide with the structural changes made to `unopartyd` (now `unoparty-lib` and `unoparty-cli`) and `unoblockd` (now `unoblock`):
 
   * Revamped and refactored build system: Build system is for federated node only, given that `unoparty` and `unoblock` both have their own setuptools `setup.py` files now.
-  * Renamed repo from `unoparty_build` to `federatednode_build`
+  * Renamed repo from `unoparty_build` to `federatednode-uno_build`
   * Removed Windows and Ubuntu 12.04/13.10 support.
   * Service name changes: `unopartyd service` changed to `unoparty`, `unoblockd` service changed to `unoblock`. `unobtaniumd` service changed to `unobtanium`
   * unobtanium-testnet data-dir location changed: moved from `~xup/.unobtanium-testnet` to `~xup/.unobtanium/testnet3`
@@ -61,7 +61,7 @@
 
     When updating to this new version, please BACKUP all data, and do a complete rebuild. Best way to kick this off is to do:
 ```
-BRANCH=develop wget -q -O /tmp/fednode_run.py https://raw.github.com/terhnt/federatednode_build/${BRANCH}/run.py sudo python3 /tmp/fednode_run.py
+BRANCH=develop wget -q -O /tmp/unonode_run.py https://raw.github.com/terhnt/federatednode-uno_build/${BRANCH}/run.py sudo python3 /tmp/unonode_run.py
 ```
 
     When prompted, choose rebuild (‘r’), and then answer the other questions as appropriate. This rebuild should not delete your existing data, but does automatically build out everything for the new configuration files and paths.

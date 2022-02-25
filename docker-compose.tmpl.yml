@@ -40,14 +40,14 @@ services:
     environment:
       - PARAMS=-conf=/root/.unobtanium-config/unobtanium.testnet.conf
 
-  addrindexrs-base:
+  addrindexrs_uno-base:
     build:
-      context: ./src/addrindexrs
+      context: ./src/addrindexrs_uno
       dockerfile: ./Dockerfile
     command: cargo run --release -- -vvvv
     volumes:
-      - ./config/addrindexrs:/root/.config/addrindexrs
-      - addrindexrs-data:/home/user/db/
+      - ./config/addrindexrs_uno:/root/.config/addrindexrs_uno
+      - addrindexrs_uno-data:/home/user/db/
     logging:
       driver: "json-file"
       options:
@@ -58,20 +58,20 @@ services:
       - ADDRINDEXRS_TXID_LIMIT=15000
       - "ADDRINDEXRS_COOKIE=unobtaniumrpc:rpc"
 
-  addrindexrs-base-mainnet:
+  addrindexrs_uno-base-mainnet:
     hostname: ${HOSTNAME_BASE}-idxd
     extends:
-      service: addrindexrs-base
+      service: addrindexrs_uno-base
     ports:
       - "8122:8122"
     environment:
       - "ADDRINDEXRS_INDEXER_RPC_ADDR=0.0.0.0:8122"
       - "ADDRINDEXRS_DAEMON_RPC_ADDR=unobtanium:65535"
 
-  addrindexrs-base-testnet:
+  addrindexrs_uno-base-testnet:
     hostname: ${HOSTNAME_BASE}-idxd-t
     extends:
-      service: addrindexrs-base
+      service: addrindexrs_uno-base
     ports:
       - "18122:18122"
     environment:
@@ -142,7 +142,7 @@ services:
       - PARAMS=--config-file=/root/.config/unoblock/server.testnet.conf
 
   armory-utxsvr-base:
-    image: counterparty/armory-utxsvr:${FEDNODE_RELEASE_TAG}
+    image: counterparty/armory-utxsvr:${UNONODE_RELEASE_TAG}
     volumes:
       - ./src/armory-utxsvr:/armory-utxsvr
       - armory-data:/root/.armory
@@ -233,7 +233,7 @@ services:
       - "8197:8197"
     environment:
       - HTTP_PORT=8197
-      - ADDRINDEXRS_URL=tcp://addrindexrs:8122
+      - ADDRINDEXRS_URL=tcp://addrindexrs_uno:8122
       - UNOBTANIUM_ZMQ_URL=tcp://unobtanium:28535
       - REDIS_URL=redis://redis:6379/8
       - SECRETS_PATH=/root/.config/xup-proxy/secrets
@@ -246,7 +246,7 @@ services:
       - "18197:18197"
     environment:
       - HTTP_PORT=18197
-      - ADDRINDEXRS_URL=tcp://addrindexrs-testnet:18122
+      - ADDRINDEXRS_URL=tcp://addrindexrs_uno-testnet:18122
       - UNOBTANIUM_ZMQ_URL=tcp://unobtanium-testnet:38535
       - REDIS_URL=redis://redis:6379/9
       - SECRETS_PATH=/root/.config/xup-proxy/secrets-testnet

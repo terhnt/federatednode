@@ -1,10 +1,10 @@
 [Default]
 backend-ssl-no-verify=True
-backend-name=addrindexrs
+backend-name=addrindexrs_uno
 backend-connect=unobtanium
 backend-user=unobtaniumrpc
 backend-password=rpc
-indexd-connect=addrindexrs
+indexd-connect=addrindexrs_uno
 indexd-port=8122
 rpc-host=0.0.0.0
 rpc-user=unobtaniumrpc

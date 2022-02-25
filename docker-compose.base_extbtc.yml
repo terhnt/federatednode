@@ -1,30 +1,30 @@
 version: '2'
 
 services:
-  addrindexrs:
+  addrindexrs_uno:
     extends:
       file: docker-compose.tmpl.yml
-      service: addrindexrs-base-mainnet
+      service: addrindexrs_uno-base-mainnet
 
-  addrindexrs-testnet:
+  addrindexrs_uno-testnet:
     extends:
       file: docker-compose.tmpl.yml
-      service: addrindexrs-base-testnet
+      service: addrindexrs_uno-base-testnet
 
   unoparty:
     extends:
       file: docker-compose.tmpl.yml
       service: unoparty-base-mainnet
     links:
-      - addrindexrs
+      - addrindexrs_uno
 
   unoparty-testnet:
     extends:
       file: docker-compose.tmpl.yml
       service: unoparty-base-testnet
     links:
-      - addrindexrs-testnet
+      - addrindexrs_uno-testnet
 
 volumes:
-  addrindexrs-data:
+  addrindexrs_uno-data:
   unoparty-data:
